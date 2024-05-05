@@ -8,6 +8,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"gopkg.in/mgo.v2/bson"
 )
+func GetMongoClient() *mongo.Client {
+	return client
+}
 var client *mongo.Client 
 func ConnectDB() *mongo.Client {
 	
