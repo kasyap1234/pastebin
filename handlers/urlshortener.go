@@ -1,14 +1,17 @@
 package handlers
+
 import (
 	"net/http"
-	"github.com/gin-gonic/gin"
-	"github.com/kasyap1234/pastebin/models"
-	"github.com/kasyap1234/pastebin/database"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
-	
-	"github.com/kasyap1234/pastebin/internal"
 
+	"github.com/gin-gonic/gin"
+	"github.com/kasyap1234/pastebin/database"
+	"github.com/kasyap1234/pastebin/models"
+	
+
+	
+
+	"github.com/kasyap1234/pastebin/internal"
 )
 func CreateShortURL (c *gin.Context){
 
@@ -30,7 +33,7 @@ collection :=database.GetMongoClient().Database("pastebin").Collection("urlshort
   if err !=nil {
 	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
   }
-  c.JSON(http.StatusOK,shortURL)
+  c.JSON(http.StatusOK,newURL.ShortURL)
 
   
   
