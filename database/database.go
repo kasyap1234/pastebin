@@ -61,12 +61,14 @@ func InsertOne(collection *mongo.Collection, document interface {}) error {
 	return nil ; 
 }
 
-func UpdateOne(collection *mongo.Collection , filter interface {},update interface {}){
+func UpdateOne(collection *mongo.Collection , filter interface {},update interface {})error{
 	_,err := collection.UpdateOne(context.Background(),filter ,update);
 	if err !=nil {
 		log.Fatal(err); 
 
 	}
+	return err; 
+	
 
 }
 func DeleteOne(collection *mongo.Collection , filter interface {})error {
@@ -79,6 +81,7 @@ func DeleteOne(collection *mongo.Collection , filter interface {})error {
 	return err; 
 
 }
+
 
 
 
