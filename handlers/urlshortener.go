@@ -1,39 +1,37 @@
 package handlers
-
 import (
-	"crypto/md5"
+	"net/http"
+	"github.com/gin-gonic/gin"
+	"github.com/kasyap1234/pastebin/models"
+	"github.com/kasyap1234/pastebin/database"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
 	
-	"encoding/hex"
-	"math/big"
+	"github.com/kasyap1234/pastebin/internal"
+
 )
-func GenerateShortURL(longURL string) (string,error){
-	// generating md5 hash for the long url 
+func CreateShortURL (c *gin.Context){
 
-	
-	hash :=md5.Sum([]byte(longURL))
-	// converting the hash to hash string 
-	hashString :=hex.EncodeToString(hash[:])
-   // now converting the hashstring to base62 
-   base62Str :=base62Encode(hashString); 
-   shortURL :="http://pastebin.com/"+base62Str
-   return shortURL, nil ; 
-
+shortURL,err  :=internal.GenerateShortURL(c.Param("longURL"))
+if err :=c.ShouldBindJSON(&shortURL); err !=nil {
+	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+    return 
 }
-func base62Encode(input string) string {
-	const base62Chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	var result []byte
+newURL :=models.URL{
+	
+	ShortURL: shortURL,
+	LongURL: c.Param("longURL"),
+	CreatedAt: time.Now(),
+}
 
-	num := new(big.Int)
-	num.SetString(input, 16)
+collection :=database.GetMongoClient().Database("pastebin").Collection("urlshortener"); 
 
-	base := big.NewInt(62)
-	zero := big.NewInt(0)
+  err =database.InsertOne(collection,shortURL); 
+  if err !=nil {
+	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+  }
+  c.JSON(http.StatusOK,shortURL)
 
-	for num.Cmp(zero) > 0 {
-		rem := new(big.Int)
-		num.DivMod(num, base, rem)
-		result = append([]byte{base62Chars[rem.Int64()]}, result...)
-	}
-
-	return string(result)
+  
+  
 }
