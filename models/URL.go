@@ -1,6 +1,9 @@
-package models 
-import ("time"
+package models
 
+import (
+	"time"
+
+	"gopkg.in/mgo.v2/bson"
 )
 type URL struct {
 	ID bson.ObjectId `json:"_id" bson:"_id"`
