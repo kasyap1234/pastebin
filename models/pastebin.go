@@ -10,5 +10,5 @@ type Pastebin struct {
 	Views    int64         `json:"views" bson:"views"`
 	Owner    string        `json:"owner" bson:"owner"`
 	Password string        `json:"password" bson:"password"`
-	URL      string        `json:"url" bson:"url"`
+	LongURL      string        `json:"url" bson:"url"`
 }

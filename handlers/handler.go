@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/mgo.v2/bson"
 )
+
 func CreatePaste(c * gin.Context){
 	var pastebin models.Pastebin 
 
@@ -82,7 +83,7 @@ func updatePasteByID(c *gin.Context){
 			{"views", updatePaste.Views},
 			{"owner", updatePaste.Owner},
 			{"password", updatePaste.Password},
-			{"url", updatePaste.URL},
+			{"url", updatePaste.LongURL},
 		}},
 	}
     err = database.UpdateOne(collection,filter,update)

@@ -24,7 +24,7 @@ func ConnectDB() *mongo.Client {
 	return client; 
 }
 func FindAll(collection *mongo.Collection) ([]interface{},error) {
-	var results [] interface {}; 
+	var results []interface {}; 
 	cursor, err := collection.Find(context.Background(),bson.M{}); 
 	if err !=nil {
 		log.Fatal("Error while finding all documents ", err);
