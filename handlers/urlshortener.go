@@ -34,6 +34,7 @@ collection :=database.GetMongoClient().Database("pastebin").Collection("urlshort
 	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
   }
   c.JSON(http.StatusOK,newURL.ShortURL)
+  fmt.Println("new url created successfully")
 
   
   
