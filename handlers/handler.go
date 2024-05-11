@@ -22,6 +22,10 @@ Collection :=database.GetMongoClient().Database("pastebin").Collection("pastes")
 if err := database.InsertOne(Collection,pastebin); err !=nil {
 	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 }
+pastebin.LongURL=internal.CreateLongURL(); 
+pastebin.URL=internal.GenerateShortURL(pastebin.LongURL); 
+pastebin.Expires = time.Now().Add(7 * 24 * time.Hour).Unix()
+
 
 c.JSON(http.StatusOK,pastebin)
 
