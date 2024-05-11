@@ -17,7 +17,7 @@ func CreatePaste(c * gin.Context){
 	var pastebin models.Pastebin 
 
      if err  :=c.ShouldBindJSON(&pastebin); err !=nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body "})
 		return 
 }
 Collection :=database.GetMongoClient().Database("pastebin").Collection("pastes")
@@ -33,8 +33,9 @@ if err !=nil{
 	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 }
 
-pastebin.Expires = time.Now().Add(7 * 24 * time.Hour).Unix()
 
+pastebin.Expires = time.Now().Add(7 * 24 * time.Hour).Unix()
+database.UpdateOne(Collection,bson.M{"ID":pastebin.ID},bson.M{"$set":bson.M{"shortURL":shortURL,"expires":pastebin.Expires}})
 
 c.JSON(http.StatusOK,pastebin)
 

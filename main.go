@@ -3,7 +3,7 @@ import (
 	"fmt"
     "github.com/kasyap1234/pastebin/handlers"
 	"github.com/gin-gonic/gin"
-	"github.com/swaggo/files"
+	
 	"github.com/kasyap1234/pastebin/database"
 	
 
