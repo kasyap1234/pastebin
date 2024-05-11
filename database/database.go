@@ -14,7 +14,7 @@ func GetMongoClient() *mongo.Client {
 var client *mongo.Client 
 func ConnectDB() *mongo.Client {
 	
-	clientOptions :=options.Client().ApplyURI("mongodb://localhost:80800")
+	clientOptions :=options.Client().ApplyURI("mongodb://localhost:27018")
 	var err error 
 	client ,err =mongo.Connect(context.Background(),clientOptions)
 	if err != nil {

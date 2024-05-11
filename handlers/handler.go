@@ -2,7 +2,10 @@ package handlers
 
 import (
 	"net/http"
-
+    //  "fmt"
+	// "time"
+	"time"
+	"github.com/kasyap1234/pastebin/internal"
 	"github.com/gin-gonic/gin"
 	"github.com/kasyap1234/pastebin/database"
 	"github.com/kasyap1234/pastebin/models"
@@ -23,7 +26,13 @@ if err := database.InsertOne(Collection,pastebin); err !=nil {
 	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 }
 pastebin.LongURL=internal.CreateLongURL(); 
-pastebin.URL=internal.GenerateShortURL(pastebin.LongURL); 
+var shortURL string 
+pastebin.ShortURL =shortURL; 
+shortURL,err :=internal.GenerateShortURL(pastebin.LongURL); 
+if err !=nil{
+	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+}
+
 pastebin.Expires = time.Now().Add(7 * 24 * time.Hour).Unix()
 
 
@@ -48,7 +57,7 @@ func GetPasteByID(c *gin.Context){
 
 
 }
-func deletePasteByID(c *gin.Context){
+func DeletePasteByID(c *gin.Context){
 	pasteID :=c.Param("ID")
 	objID,err :=primitive.ObjectIDFromHex(pasteID);
 	if err !=nil {
@@ -64,7 +73,7 @@ func deletePasteByID(c *gin.Context){
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "paste deleted successfully"})
 }
-func updatePasteByID(c *gin.Context){
+func UpdatePasteByID(c *gin.Context){
 	
 	pasteID :=c.Param("ID")
 	objID,err :=primitive.ObjectIDFromHex(pasteID);
@@ -92,7 +101,7 @@ func updatePasteByID(c *gin.Context){
 	}
     err = database.UpdateOne(collection,filter,update)
 
-
+ 
 
 	
 

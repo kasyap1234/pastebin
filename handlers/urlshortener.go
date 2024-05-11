@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 	"time"
-
+    "fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/kasyap1234/pastebin/database"
 	"github.com/kasyap1234/pastebin/models"

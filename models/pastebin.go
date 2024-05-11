@@ -11,4 +11,7 @@ type Pastebin struct {
 	Owner    string        `json:"owner" bson:"owner"`
 	Password string        `json:"password" bson:"password"`
 	LongURL      string        `json:"url" bson:"url"`
+	ShortURL  string        `json:"shortURL" bson:"shortURL"`
+
 }
+
