@@ -13,32 +13,52 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-func CreatePaste(c * gin.Context){
-	var pastebin models.Pastebin 
+func CreatePaste(c *gin.Context) {
+    var pastebin models.Pastebin
 
-     if err  :=c.ShouldBindJSON(&pastebin); err !=nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body "})
-		return 
-}
-Collection :=database.GetMongoClient().Database("pastebin").Collection("pastes")
+    if err := c.ShouldBindJSON(&pastebin); err!= nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+        return
+    }
 
-if err := database.InsertOne(Collection,pastebin); err !=nil {
-	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-}
-pastebin.LongURL=internal.CreateLongURL(); 
-var shortURL string 
-pastebin.ShortURL =shortURL; 
-shortURL,err :=internal.GenerateShortURL(pastebin.LongURL); 
-if err !=nil{
-	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-}
+    // Ensure pastebin.ID is set before attempting to update the document
+    if pastebin.ID == "" {
+        pastebin.ID=primitive.NewObjectID().Hex(); 
 
+        return
+    }
 
-pastebin.Expires = time.Now().Add(7 * 24 * time.Hour).Unix()
-database.UpdateOne(Collection,bson.M{"ID":pastebin.ID},bson.M{"$set":bson.M{"shortURL":shortURL,"expires":pastebin.Expires}})
+    Collection := database.GetMongoClient().Database("pastebin").Collection("pastes")
 
-c.JSON(http.StatusOK,pastebin)
+    if err := database.InsertOne(Collection, pastebin); err!= nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
 
+    pastebin.LongURL = internal.CreateLongURL()
+    if pastebin.LongURL == "" {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate long URL"})
+        return
+    }
+
+    var shortURL string
+    pastebin.ShortURL = shortURL
+    shortURL, err := internal.GenerateShortURL(pastebin.LongURL)
+    if err!= nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    pastebin.ShortURL = shortURL
+    pastebin.Expires = time.Now().Add(7 * 24 * time.Hour).Unix()
+
+    // Check for errors after the update operation
+    if err := database.UpdateOne(Collection, bson.M{"ID": pastebin.ID}, bson.M{"$set": bson.M{"shortURL": shortURL, "expires": pastebin.Expires}}); err!= nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, pastebin)
 }
 func GetPasteByID(c *gin.Context){
 	pasteID :=c.Param("ID")
