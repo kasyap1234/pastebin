@@ -2,8 +2,7 @@ package handlers
 
 import (
 	"net/http"
-    //  "fmt"
-	// "time"
+    
 	"time"
 	"github.com/kasyap1234/pastebin/internal"
 	"github.com/gin-gonic/gin"
@@ -22,7 +21,7 @@ func CreatePaste(c *gin.Context) {
     }
 
     // Ensure pastebin.ID is set before attempting to update the document
-    if pastebin.ID == "" {
+	if pastebin.ID == "" {
         pastebin.ID=primitive.NewObjectID().Hex(); 
 
         return
@@ -121,10 +120,6 @@ func UpdatePasteByID(c *gin.Context){
 		}},
 	}
     err = database.UpdateOne(collection,filter,update)
-
- 
-
-	
 
 	if err !=nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

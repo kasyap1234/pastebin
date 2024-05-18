@@ -1,17 +1,13 @@
 package models
 
-
-
 type Pastebin struct {
-	ID      string `json:"_id" bson:"_id"`
-	Content  string        `json:"content" bson:"content"`
-	Language string        `json:"language" bson:"language"`
-	Expires  int64         `json:"expires" bson:"expires"`
-	Views    string        `json:"views" bson:"views"`
-	Owner    string        `json:"owner" bson:"owner"`
-	Password string        `json:"password" bson:"password"`
-	LongURL      string        `json:"url" bson:"url"`
-	ShortURL  string        `json:"shortURL" bson:"shortURL"`
-
+    ID          primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+    Content     string             `json:"content,omitempty" bson:"content,omitempty"`
+    Language    string             `json:"language,omitempty" bson:"language,omitempty"`
+    Expires     int64              `json:"expires,omitempty" bson:"expires,omitempty"`
+    Views       string             `json:"views,omitempty" bson:"views,omitempty"`
+    Owner       string             `json:"owner,omitempty" bson:"owner,omitempty"`
+    Password    string             `json:"password,omitempty" bson:"password,omitempty"`
+    LongURL     string             `json:"url,omitempty" bson:"url,omitempty"`
+    ShortURL    string             `json:"shortURL,omitempty" bson:"shortURL,omitempty"`
 }
-
