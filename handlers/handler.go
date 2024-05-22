@@ -1,5 +1,4 @@
 package handlers
-
 import (
 	"net/http"
     
@@ -21,9 +20,8 @@ func CreatePaste(c *gin.Context) {
     }
 
     // Ensure pastebin.ID is set before attempting to update the document
-	if pastebin.ID == "" {
-        pastebin.ID=primitive.NewObjectID().Hex(); 
-
+    if pastebin.ID.IsZero() {
+        pastebin.ID = primitive.NewObjectID()
         return
     }
 
@@ -58,74 +56,75 @@ func CreatePaste(c *gin.Context) {
     }
 
     c.JSON(http.StatusOK, pastebin)
-}
-func GetPasteByID(c *gin.Context){
-	pasteID :=c.Param("ID")
-	objID,err :=primitive.ObjectIDFromHex(pasteID); 
-	if err !=nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return 
-	}
-	collection :=database.GetMongoClient().Database("pastebin").Collection("pastes")
-	filter :=bson.D{{"ID",objID}}
-	paste,err := database.FindOneByID(collection,filter); 
-	if err !=nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	return 
-	}
-	c.JSON(http.StatusOK,paste)
-
-
-}
-func DeletePasteByID(c *gin.Context){
-	pasteID :=c.Param("ID")
-	objID,err :=primitive.ObjectIDFromHex(pasteID);
-	if err !=nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return 
-	}
-	collection :=database.GetMongoClient().Database("pastebin").Collection("pastes")
-	filter :=bson.D{{"ID",objID}}
-	err =database.DeleteOne(collection,filter); 
-	if err !=nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	return 
-	}
-	c.JSON(http.StatusOK, gin.H{"message": "paste deleted successfully"})
-}
-func UpdatePasteByID(c *gin.Context){
-	
-	pasteID :=c.Param("ID")
-	objID,err :=primitive.ObjectIDFromHex(pasteID);
-	if err !=nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return 
-	}
-	var updatePaste models.Pastebin
-	if err :=c.ShouldBindJSON(&updatePaste); err !=nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return 
-	}
-	filter :=bson.D{{"ID",objID}}
-	collection :=database.GetMongoClient().Database("pastebin").Collection("pastes")
-	update := bson.D{
-		{"$set", bson.D{
-			{"content", updatePaste.Content},
-			{"language", updatePaste.Language},
-			{"expires", updatePaste.Expires},
-			{"views", updatePaste.Views},
-			{"owner", updatePaste.Owner},
-			{"password", updatePaste.Password},
-			{"url", updatePaste.LongURL},
-		}},
-	}
-    err = database.UpdateOne(collection,filter,update)
-
-	if err !=nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return 
-	}
-	c.JSON(http.StatusOK, gin.H{"message": "paste updated successfully"})
-
+    return
 }
 
+func GetPasteByID(c *gin.Context) {
+    pasteID := c.Param("ID")
+    objID, err := primitive.ObjectIDFromHex(pasteID)
+    if err!= nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+    collection := database.GetMongoClient().Database("pastebin").Collection("pastes")
+    filter := bson.D{{"ID", objID}}
+    paste, err := database.FindOneByID(collection, filter)
+    if err!= nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+    c.JSON(http.StatusOK, paste)
+    return
+}
+
+func DeletePasteByID(c *gin.Context) {
+    pasteID := c.Param("ID")
+    objID, err := primitive.ObjectIDFromHex(pasteID)
+    if err!= nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+    collection := database.GetMongoClient().Database("pastebin").Collection("pastes")
+    filter := bson.D{{"ID", objID}}
+    err = database.DeleteOne(collection, filter)
+    if err!= nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+    c.JSON(http.StatusOK, gin.H{"message": "paste deleted successfully"})
+    return
+}
+
+func UpdatePasteByID(c *gin.Context) {
+    pasteID := c.Param("ID")
+    objID, err := primitive.ObjectIDFromHex(pasteID)
+    if err!= nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+    var updatePaste models.Pastebin
+    if err := c.ShouldBindJSON(&updatePaste); err!= nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+    filter := bson.D{{"ID", objID}}
+    collection := database.GetMongoClient().Database("pastebin").Collection("pastes")
+    update := bson.D{
+        {"$set", bson.D{
+            {"content", updatePaste.Content},
+            {"language", updatePaste.Language},
+            {"expires", updatePaste.Expires},
+            {"views", updatePaste.Views},
+            {"owner", updatePaste.Owner},
+            {"password", updatePaste.Password},
+            {"url", updatePaste.LongURL},
+        }},
+    }
+    err = database.UpdateOne(collection, filter, update)
+    if err!= nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+    c.JSON(http.StatusOK, gin.H{"message": "paste updated successfully"})
+    return
+}
